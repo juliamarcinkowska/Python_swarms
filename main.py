@@ -23,7 +23,7 @@ def calculate_value_f(p):
     # print(x1, x2, x3, x4)
     f_value = 0.6224 * x1 * x3 * x4 + 1.7781 * x2 * x3 ** 2 + 3.1661 * x1 ** 2 * x4 + 19.84 * x1 ** 2 * x3
     if not check_constraints(p):
-        return f_value * 10000
+        return f_value + 10000000
     else:
         return f_value
 
@@ -49,7 +49,11 @@ def main():
             if temp_val < p.f_value:
                 p.f_value = temp_val
                 p.vector_P = p.vector_X
-        leader = min(particles, key=attrgetter('f_value'))
+        leaders = sorted(particles, key=attrgetter('f_value'))
+        for ld in leaders:
+            if check_constraints(ld):
+                leader = ld
+                break
         leader_values.append(leader.f_value)
         for p in particles:
             update_values(p, leader)
