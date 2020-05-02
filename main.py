@@ -46,7 +46,7 @@ def update_values(part, leader):
 
 def main():
     particle_no = 30
-    iter_no = 10
+    iter_no = 10000
     leader_values = []
     leader = None
     particles = [Particle() for i in range(particle_no)]
@@ -57,7 +57,7 @@ def main():
                 p.f_value = temp_val
             if temp_val < p.f_value:
                 p.f_value = temp_val
-                p.vector_P = p.vector_X
+                p.vector_P = p.vector_X.copy()
         leaders = sorted(particles, key=attrgetter('f_value'))
         for ld in leaders:
             if check_constraints(ld):
