@@ -30,7 +30,7 @@ def calculate_value_f(p):
     # print(x1, x2, x3, x4)
     f_value = 0.6224 * x1 * x3 * x4 + 1.7781 * x2 * x3 ** 2 + 3.1661 * x1 ** 2 * x4 + 19.84 * x1 ** 2 * x3
     if not check_constraints(p):
-        return f_value + 10000000
+        return f_value + 1000000000
     else:
         return f_value
 
@@ -45,30 +45,44 @@ def update_values(part, leader):
 
 def main():
     particle_no = 30
-    iter_no = 10
+    iter_no = 10000
+    sum = 0
     leader_values = []
-    leader = None
-    particles = [Particle() for i in range(particle_no)]
-    for i in range(iter_no):
-        for p in particles:
-            temp_val = calculate_value_f(p)
-            if p.f_value is None:
-                p.f_value = temp_val
-            if temp_val < p.f_value:
-                p.f_value = temp_val
-                p.vector_P = p.vector_X.copy()
-        leaders = sorted(particles, key=attrgetter('f_value'))
-        for ld in leaders:
-            if check_constraints(ld):
-                leader = copy.deepcopy(ld)
-                break
-        leader_values.append(leader.f_value)
-        for p in particles:
-            update_values(p, leader)
-    plt.plot(leader_values)
-    plt.show()
-    leader = min(particles, key=attrgetter('f_value'))
-    print(leader_values[-1], ' ', leader.vector_P)
+    leader, global_leader = None, None
+    for j in range(11):
+        particles = [Particle() for i in range(particle_no)]
+        for i in range(iter_no):
+            for p in particles:
+                temp_val = calculate_value_f(p)
+                if p.f_value is None:
+                    p.f_value = temp_val
+                if temp_val < p.f_value:
+                    p.f_value = temp_val
+                    p.vector_P = p.vector_X.copy()
+            global_leaders = sorted(particles, key=attrgetter('f_value'))
+            for gld in global_leaders:
+                if check_constraints(gld):
+                    global_leader = copy.deepcopy(gld)
+                    break
+            for p in particles:
+                neighbours = sorted(particles, key=lambda nb: euclidean_distance(nb, p))
+                neighbourhood = neighbours[0:3]
+                leaders = sorted(neighbourhood, key=attrgetter('f_value'))
+                for ld in leaders:
+                    if check_constraints(ld):
+                        leader = copy.deepcopy(ld)
+                        break
+                    if ld == leaders[-1]:
+                        leader = copy.deepcopy(global_leader)
+                for n in neighbourhood:
+                    update_values(n, leader)
+            leader_values.append(global_leader.f_value)
+        plt.plot(leader_values)
+        plt.show()
+        leader = min(particles, key=attrgetter('f_value'))
+        print(leader_values[-1], ' ', leader.vector_P)
+        sum += leader_values[-1]
+    print(sum/10)
 
 
 if __name__ == "__main__":
