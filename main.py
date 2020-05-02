@@ -1,3 +1,4 @@
+import copy
 import math
 from operator import attrgetter
 from random import random
@@ -16,6 +17,13 @@ def check_constraints(p):
         return False
 
 
+def euclidean_distance(particles, p):
+    x1, x2, x3, x4 = p.vector_X
+    for i in particles:
+        x1p, x2p, x3p, x4p = i.vector_X
+        dist = math.sqrt((x1 - x1p) ** 2 + (x2 - x2p) ** 2 + (x3 - x3p) ** 2 + (x4 - x4p) ** 2)
+
+
 def calculate_value_f(p):
     p.vector_X[0] = int(p.vector_X[0])
     p.vector_X[1] = int(p.vector_X[1])
@@ -28,9 +36,9 @@ def calculate_value_f(p):
         return f_value
 
 
-def update_values(p, leader):
+def update_values(part, leader):
     w, c1, c2 = (0.5 * random()) / 2.0, 1.5 * random(), 1.5 * random()
-    v, x, p, pl = p.vector_V, p.vector_X, p.vector_P, leader.vector_P
+    v, x, p, pl = part.vector_V, part.vector_X, part.vector_P, leader.vector_P
     for i in range(4):
         v[i] = w * v[i] + c1 * (p[i] - x[i]) + c2 * (pl[i] - x[i])
         x[i] += v[i]
@@ -38,8 +46,9 @@ def update_values(p, leader):
 
 def main():
     particle_no = 30
-    iter_no = 10000
+    iter_no = 10
     leader_values = []
+    leader = None
     particles = [Particle() for i in range(particle_no)]
     for i in range(iter_no):
         for p in particles:
@@ -52,7 +61,7 @@ def main():
         leaders = sorted(particles, key=attrgetter('f_value'))
         for ld in leaders:
             if check_constraints(ld):
-                leader = ld
+                leader = copy.deepcopy(ld)
                 break
         leader_values.append(leader.f_value)
         for p in particles:
