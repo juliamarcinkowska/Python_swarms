@@ -17,11 +17,10 @@ def check_constraints(p):
         return False
 
 
-def euclidean_distance(particles, p):
+def euclidean_distance(i, p):
     x1, x2, x3, x4 = p.vector_X
-    for i in particles:
-        x1p, x2p, x3p, x4p = i.vector_X
-        dist = math.sqrt((x1 - x1p) ** 2 + (x2 - x2p) ** 2 + (x3 - x3p) ** 2 + (x4 - x4p) ** 2)
+    x1p, x2p, x3p, x4p = i.vector_X
+    return math.sqrt((x1 - x1p) ** 2 + (x2 - x2p) ** 2 + (x3 - x3p) ** 2 + (x4 - x4p) ** 2)
 
 
 def calculate_value_f(p):
@@ -46,7 +45,7 @@ def update_values(part, leader):
 
 def main():
     particle_no = 30
-    iter_no = 10000
+    iter_no = 10
     leader_values = []
     leader = None
     particles = [Particle() for i in range(particle_no)]
