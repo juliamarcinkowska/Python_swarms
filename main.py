@@ -10,9 +10,13 @@ from Particle import Particle
 
 def check_constraints(p):
     x1, x2, x3, x4 = p.vector_X
-    if 0.0193 * x3 - x1 <= 0 and 0.00954 * x3 - x2 <= 0 \
-            and -math.pi * x3 ** 2 * x4 - 4 / 3 * math.pi * x3 ** 3 + 1296000 <= 0 \
-            and -x4 - 240 <= 0 and 1 <= x1 <= 99 and 1 <= x2 <= 99 and 10.00 <= x3 <= 200.00 and 10.00 <= x4 <= 200.00:
+    cond1 = 0.0193 * x3 - x1 <= 0
+    cond2 = 0.00954 * x3 - x2 <= 0
+    cond3 = -math.pi * x3 ** 2 * x4 - 4 / 3 * math.pi * x3 ** 3 + 1296000 <= 0
+    cond4 = -x4 - 240 <= 0
+    cond5 = 1 <= x1, x2 <= 99
+    cond6 = 10.00 <= x3, x4 <= 200.00
+    if cond1 and cond2 and cond3 and cond4 and cond5 and cond6:
         return True
     else:
         return False
@@ -28,7 +32,6 @@ def calculate_value_f(p):
     p.vector_X[0] = int(p.vector_X[0])
     p.vector_X[1] = int(p.vector_X[1])
     x1, x2, x3, x4 = p.vector_X
-    # print(x1, x2, x3, x4)
     f_value = 0.6224 * x1 * x3 * x4 + 1.7781 * x2 * x3 ** 2 + 3.1661 * x1 ** 2 * x4 + 19.84 * x1 ** 2 * x3
     if not check_constraints(p):
         return f_value + 10000000000
@@ -46,11 +49,11 @@ def update_values(part, leader):
 
 def main():
     particle_no = 30
-    iter_no = 1000
-    sum = 0
+    iter_no = 10000
+    sum_values = 0
     leader_values = []
     leader, global_leader = None, None
-    for j in range(11):
+    for j in range(10):
         particles = [Particle() for i in range(particle_no)]
         for i in range(iter_no):
             for p in particles:
@@ -80,13 +83,13 @@ def main():
             leader_values.append(global_leader.f_value)
         file = open("values" + str(j) + ".txt", "w+")
         file.writelines(["%s;" % item for item in leader_values])
-        file.write("\n\n")
         plt.plot(leader_values)
         plt.show()
         leader = min(particles, key=attrgetter('f_value'))
         print(leader_values[-1], ' ', leader.vector_P)
-        sum += leader_values[-1]
-    print(sum/10)
+        sum_values += leader_values[-1]
+        leader_values.clear()
+    print(sum_values / 10)
 
 
 if __name__ == "__main__":
