@@ -46,12 +46,11 @@ def update_values(part, leader):
 
 def main():
     particle_no = 30
-    iter_no = 10000
+    iter_no = 1000
     sum = 0
     leader_values = []
     leader, global_leader = None, None
-    file = open("values.txt", "w+")
-    for j in range(1):
+    for j in range(11):
         particles = [Particle() for i in range(particle_no)]
         for i in range(iter_no):
             for p in particles:
@@ -79,6 +78,7 @@ def main():
                 for n in neighbourhood:
                     update_values(n, leader)
             leader_values.append(global_leader.f_value)
+        file = open("values" + str(j) + ".txt", "w+")
         file.writelines(["%s;" % item for item in leader_values])
         file.write("\n\n")
         plt.plot(leader_values)
