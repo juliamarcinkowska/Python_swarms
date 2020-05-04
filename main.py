@@ -2,6 +2,7 @@ import copy
 import math
 from operator import attrgetter
 from random import random
+
 import matplotlib.pyplot as plt
 
 from Particle import Particle
@@ -30,7 +31,7 @@ def calculate_value_f(p):
     # print(x1, x2, x3, x4)
     f_value = 0.6224 * x1 * x3 * x4 + 1.7781 * x2 * x3 ** 2 + 3.1661 * x1 ** 2 * x4 + 19.84 * x1 ** 2 * x3
     if not check_constraints(p):
-        return f_value + 1000000000
+        return f_value + 10000000000
     else:
         return f_value
 
@@ -49,7 +50,8 @@ def main():
     sum = 0
     leader_values = []
     leader, global_leader = None, None
-    for j in range(11):
+    file = open("values.txt", "w+")
+    for j in range(1):
         particles = [Particle() for i in range(particle_no)]
         for i in range(iter_no):
             for p in particles:
@@ -66,7 +68,7 @@ def main():
                     break
             for p in particles:
                 neighbours = sorted(particles, key=lambda nb: euclidean_distance(nb, p))
-                neighbourhood = neighbours[0:3]
+                neighbourhood = neighbours[0:4]
                 leaders = sorted(neighbourhood, key=attrgetter('f_value'))
                 for ld in leaders:
                     if check_constraints(ld):
@@ -77,6 +79,8 @@ def main():
                 for n in neighbourhood:
                     update_values(n, leader)
             leader_values.append(global_leader.f_value)
+        file.writelines(["%s;" % item for item in leader_values])
+        file.write("\n\n")
         plt.plot(leader_values)
         plt.show()
         leader = min(particles, key=attrgetter('f_value'))
